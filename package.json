@@ -1,0 +1,26 @@
+{
+  "name": "universal-video-downloader",
+  "version": "1.0.0",
+  "description": "Universal Video Downloader for 1000+ sites",
+  "main": "index.js",
+  "scripts": {
+    "start": "node api/download.js"
+  },
+  "dependencies": {
+    "@distube/ytdl-core": "^4.13.5",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "ytdl-core": "^4.11.5",
+    "youtube-dl-exec": "^2.6.5",
+    "tiktok-scraper": "^3.3.8",
+    "instagram-url-direct": "^1.0.5",
+    "twitter-url-direct": "^1.0.3",
+    "facebook-url-direct": "^1.0.2",
+    "reddit-video-downloader": "^1.0.4",
+    "valid-url": "^1.0.9"
+  },
+  "engines": {
+    "node": "18.x"
+  },
+  "license": "MIT"
+}

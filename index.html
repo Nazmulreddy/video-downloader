@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Video Downloader</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⬇️</text></svg>">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-download text-blue-600 text-2xl"></i>
+                    <h1 class="text-2xl font-bold text-gray-800">Universal Video Downloader</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="text-gray-600 hover:text-blue-600 transition">
+                        <i class="fas fa-home"></i>
+                    </a>
+                    <a href="#supported" class="text-gray-600 hover:text-blue-600 transition">
+                        <i class="fas fa-check-circle"></i> Supported Sites
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Hero Section -->
+        <section class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-gray-800 mb-4 animate-fade-in">
+                Download Videos from 1000+ Sites
+            </h2>
+            <p class="text-gray-600 text-lg mb-8">
+                Simply paste the video URL and download in best quality or audio only format
+            </p>
+            
+            <!-- URL Input Section -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 mb-8 animate-slide-up">
+                <div class="flex flex-col space-y-4">
+                    <div class="relative">
+                        <i class="fas fa-link absolute left-4 top-4 text-gray-400"></i>
+                        <input 
+                            type="url" 
+                            id="videoUrl" 
+                            placeholder="Paste video URL here (YouTube, TikTok, Instagram, Facebook, Twitter, etc.)" 
+                            class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition"
+                        >
+                    </div>
+                    
+                    <!-- Quality Options -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button 
+                            id="downloadVideo" 
+                            class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center space-x-3"
+                        >
+                            <i class="fas fa-video"></i>
+                            <span>Download Best Quality Video</span>
+                        </button>
+                        
+                        <button 
+                            id="downloadAudio" 
+                            class="bg-gradient-to-r from-green-500 to-emerald-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center space-x-3"
+                        >
+                            <i class="fas fa-music"></i>
+                            <span>Download Audio Only (MP3)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div id="progressContainer" class="hidden bg-white rounded-xl shadow-lg p-4 mb-6">
+                <div class="mb-2 flex justify-between text-sm text-gray-600">
+                    <span id="progressStatus">Processing...</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div id="progressBar" class="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <div id="fileInfo" class="mt-3 text-sm text-gray-500 hidden">
+                    <div class="flex space-x-4">
+                        <span id="fileName">-</span>
+                        <span id="fileSize">-</span>
+                        <span id="fileFormat">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result Section -->
+            <div id="resultContainer" class="hidden bg-white rounded-xl shadow-lg p-6 mb-6 animate-fade-in">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-gray-800 flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-green-500"></i>
+                        <span>Download Ready!</span>
+                    </h3>
+                    <button id="closeResult" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <i class="fas fa-film text-blue-500"></i>
+                        <div class="flex-1">
+                            <div class="font-medium" id="resultTitle">Video Title</div>
+                            <div class="text-sm text-gray-500" id="resultDetails">Format: MP4 • Size: 0 MB</div>
+                        </div>
+                        <a id="downloadLink" href="#" target="_blank" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition flex items-center space-x-2">
+                            <i class="fas fa-download"></i>
+                            <span>Download</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loadingSpinner" class="hidden flex-col items-center justify-center space-y-4 py-8">
+                <div class="spinner"></div>
+                <p class="text-gray-600" id="loadingText">Processing your request...</p>
+            </div>
+        </section>
+
+        <!-- Supported Sites -->
+        <section id="supported" class="bg-white rounded-2xl shadow-lg p-8 animate-fade-in">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Supported Platforms</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="flex flex-col items-center p-4 bg-gray-50 rounded-xl hover:shadow-md transition">
+                    <i class="fab fa-youtube text-red-600 text-4xl mb-3"></i>
+                    <span class="font-semibold">YouTube</span>
+                </div>
+                <div class="flex flex-col items-center p-4 bg-gray-50 rounded-xl hover:shadow-md transition">
+                    <i class="fab fa-tiktok text-black text-4xl mb-3"></i>
+                    <span class="font-semibold">TikTok</span>
+                </div>
+                <div class="flex flex-col items-center p-4 bg-gray-50 rounded-xl hover:shadow-md transition">
+                    <i class="fab fa-instagram text-pink-600 text-4xl mb-3"></i>
+                    <span class="font-semibold">Instagram</span>
+                </div>
+                <div class="flex flex-col items-center p-4 bg-gray-50 rounded-xl hover:shadow-md transition">
+                    <i class="fab fa-facebook text-blue-700 text-4xl mb-3"></i>
+                    <span class="font-semibold">Facebook</span>
+                </div>
+                <div class="flex flex-col items-center p-4 bg-gray-50 rounded-xl hover:shadow-md transition">
+                    <i class="fab fa-twitter text-blue-400 text-4xl mb-3"></i>
+                    <span class="font-semibold">Twitter / X</span>
+                </div>
+                <div class="flex flex-col items-center p-4 bg-gray-50 rounded-xl hover:shadow-md transition">
+                    <i class="fab fa-reddit text-orange-500 text-4xl mb-3"></i>
+                    <span class="font-semibold">Reddit</span>
+                </div>
+                <div class="flex flex-col items-center p-4 bg-gray-50 rounded-xl hover:shadow-md transition">
+                    <i class="fas fa-video text-purple-600 text-4xl mb-3"></i>
+                    <span class="font-semibold">Vimeo</span>
+                </div>
+                <div class="flex flex-col items-center p-4 bg-gray-50 rounded-xl hover:shadow-md transition">
+                    <i class="fas fa-globe text-green-600 text-4xl mb-3"></i>
+                    <span class="font-semibold">1000+ Sites</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- How to Use -->
+        <section class="mt-12 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl shadow-lg p-8 animate-fade-in">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">How to Use</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
+                        <i class="fas fa-link text-2xl text-blue-600"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2">1. Copy Video URL</h4>
+                    <p class="text-gray-600">Copy the video link from your browser</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
+                        <i class="fas fa-paste text-2xl text-purple-600"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2">2. Paste & Choose</h4>
+                    <p class="text-gray-600">Paste URL and select video or audio format</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
+                        <i class="fas fa-download text-2xl text-green-600"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2">3. Download</h4>
+                    <p class="text-gray-600">Click download and save to your device</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Disclaimer -->
+        <section class="mt-12 bg-gray-100 rounded-2xl p-6 border border-gray-300">
+            <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+                <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
+                Important Disclaimer
+            </h3>
+            <p class="text-gray-700 text-sm">
+                This tool is for downloading <strong>publicly available videos only</strong>. Do not download copyrighted content without permission. 
+                We do not support downloading from paid subscription services, private videos, or content behind paywalls. 
+                The service is provided "as is" and we are not responsible for how users utilize this tool. 
+                Please respect content creators and copyright laws in your country.
+            </p>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p class="mb-4">© 2024 Universal Video Downloader. All rights reserved.</p>
+            <p class="text-gray-400 text-sm">
+                This tool runs on Vercel Serverless Functions. Videos are processed on-demand and not stored on our servers.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 space-y-3 z-50"></div>
+
+    <script>
+        // Toast notification system
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                info: 'bg-blue-500',
+                warning: 'bg-yellow-500'
+            };
+            
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                info: 'fa-info-circle',
+                warning: 'fa-exclamation-triangle'
+            };
+            
+            toast.className = `${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full opacity-0 transition-all duration-300 flex items-center space-x-3`;
+            toast.innerHTML = `
+                <i class="fas ${icons[type]}"></i>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Animate in
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full', 'opacity-0');
+                toast.classList.add('translate-x-0', 'opacity-100');
+            }, 10);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        container.removeChild(toast);
+                    }
+                }, 300);
+            }, 5000);
+            
+            // Click to dismiss
+            toast.addEventListener('click', () => {
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        container.removeChild(toast);
+                    }
+                }, 300);
+            });
+        }
+
+        // Update progress bar
+        function updateProgress(percent, status) {
+            const progressBar = document.getElementById('progressBar');
+            const progressPercent = document.getElementById('progressPercent');
+            const progressStatus = document.getElementById('progressStatus');
+            
+            progressBar.style.width = percent + '%';
+            progressPercent.textContent = percent + '%';
+            progressStatus.textContent = status;
+        }
+
+        // Show loading spinner
+        function showLoading(text = 'Processing your request...') {
+            document.getElementById('loadingSpinner').classList.remove('hidden');
+            document.getElementById('loadingText').textContent = text;
+            document.getElementById('progressContainer').classList.add('hidden');
+            document.getElementById('resultContainer').classList.add('hidden');
+        }
+
+        // Hide loading spinner
+        function hideLoading() {
+            document.getElementById('loadingSpinner').classList.add('hidden');
+        }
+
+        // Show result
+        function showResult(data) {
+            document.getElementById('resultTitle').textContent = data.title;
+            document.getElementById('resultDetails').textContent = `Format: ${data.format} • Size: ${data.filesize}`;
+            document.getElementById('downloadLink').href = data.download_url;
+            document.getElementById('resultContainer').classList.remove('hidden');
+        }
+
+        // Show progress container
+        function showProgress() {
+            document.getElementById('progressContainer').classList.remove('hidden');
+            document.getElementById('resultContainer').classList.add('hidden');
+            updateProgress(0, 'Starting download...');
+        }
+
+        // Validate URL
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        // Download handler
+        async function handleDownload(type) {
+            const urlInput = document.getElementById('videoUrl');
+            const url = urlInput.value.trim();
+            
+            // Validate URL
+            if (!url) {
+                showToast('Please enter a video URL', 'error');
+                urlInput.focus();
+                return;
+            }
+            
+            if (!isValidUrl(url)) {
+                showToast('Please enter a valid URL', 'error');
+                urlInput.focus();
+                return;
+            }
+            
+            // Show loading state
+            showLoading('Connecting to video source...');
+            showProgress();
+            
+            try {
+                updateProgress(30, 'Fetching video information...');
+                
+                // Make API request
+                const response = await fetch('/api/download', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        url: url,
+                        type: type
+                    })
+                });
+                
+                updateProgress(60, 'Processing video...');
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Download failed');
+                }
+                
+                updateProgress(90, 'Preparing download...');
+                
+                // Show result
+                setTimeout(() => {
+                    hideLoading();
+                    showResult(data);
+                    updateProgress(100, 'Complete!');
+                    showToast('Download ready! Click the download button.', 'success');
+                }, 1000);
+                
+            } catch (error) {
+                hideLoading();
+                showToast(error.message || 'Failed to download video. Please try again.', 'error');
+                console.error('Download error:', error);
+            }
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Download buttons
+            document.getElementById('downloadVideo').addEventListener('click', () => handleDownload('video'));
+            document.getElementById('downloadAudio').addEventListener('click', () => handleDownload('audio'));
+            
+            // Close result button
+            document.getElementById('closeResult').addEventListener('click', function() {
+                document.getElementById('resultContainer').classList.add('hidden');
+            });
+            
+            // URL input - paste detection
+            document.getElementById('videoUrl').addEventListener('paste', function(e) {
+                setTimeout(() => {
+                    showToast('URL pasted! Now choose video or audio format.', 'info');
+                }, 100);
+            });
+            
+            // Keyboard shortcut (Ctrl/Cmd + Enter)
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    if (document.getElementById('videoUrl').value.trim()) {
+                        handleDownload('video');
+                    }
+                }
+            });
+            
+            // Auto-focus URL input
+            document.getElementById('videoUrl').focus();
+            
+            // Show welcome toast
+            setTimeout(() => {
+                showToast('Paste any video URL and click download!', 'info');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
