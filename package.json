@@ -1,7 +1,7 @@
 {
   "name": "universal-video-downloader",
   "version": "1.0.0",
-  "description": "Universal Video Downloader for 1000+ sites",
+  "description": "Universal Video Downloader for YouTube",
   "main": "index.js",
   "scripts": {
     "start": "node api/download.js"
@@ -10,7 +10,6 @@
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "ytdl-core": "^4.11.5",
-    "youtube-dl-exec": "^2.6.5",
     "valid-url": "^1.0.9"
   },
   "engines": {
